@@ -1,5 +1,5 @@
-# vite-plugin-semi-theme
-
+# @necrobits/vite-plugin-semi-theme
+This is a fork from https://github.com/boenfu/vite-plugin-semi-theme, which contains urgent bug fixes
 - [theme options docs](https://github.com/DouyinFE/semi-design/tree/main/packages/semi-webpack#api)
 
 ```js
