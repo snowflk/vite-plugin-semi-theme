@@ -1,6 +1,6 @@
 {
   "name": "@necrobits/vite-plugin-semi-theme",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "main": "index.js",
   "repository": "git@github.com:snowflk/vite-plugin-semi-theme.git",
   "author": "snwflk <andy.tran11996@gmail.com>",
