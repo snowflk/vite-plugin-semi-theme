@@ -1,6 +1,6 @@
 const FS = require("fs");
 const Path = require("path");
-
+const resolve = require('enhanced-resolve');
 const { pathToFileURL } = require("url");
 
 const { compileString, Logger } = require("sass");
@@ -51,20 +51,17 @@ module.exports = function ({ theme, options = {} }) {
               {
                 findFileUrl(url) {
                   if (url.startsWith("~")) {
+                    const mainNodeModules = pathToFileURL('./node_modules/');
                     return new URL(
                       url.substring(1),
-                      pathToFileURL(
-                        scssFilePath.match(/^(\S*\/node_modules\/)/)[0]
-                      )
+                      mainNodeModules
                     );
                   }
 
                   let filePath = Path.resolve(Path.dirname(scssFilePath), url);
-
                   if (FS.existsSync(filePath)) {
                     return pathToFileURL(filePath);
                   }
-
                   return null;
                 },
               },
@@ -79,8 +76,7 @@ module.exports = function ({ theme, options = {} }) {
 
 // copy from https://github.com/DouyinFE/semi-design/blob/main/packages/semi-webpack/src/semi-theme-loader.ts
 function loader(source, options) {
-  const query = loaderUtils.getOptions ? loaderUtils.getOptions(this) : loaderUtils.parseQuery(this.query);
-  const theme = query.name || '@douyinfe/semi-theme-default';
+  const theme = options.name || '@douyinfe/semi-theme-default';
   // always inject
   const scssVarStr = `@import "~${theme}/scss/index.scss";\n`;
   // inject once
@@ -104,16 +100,16 @@ function loader(source, options) {
   } catch (e) {
   }
 
-  if (query.include || query.variables || componentVariables) {
+  if (options.include || options.variables || componentVariables) {
       let localImport = '';
       if (componentVariables) {
           localImport += `\n@import "~${theme}/scss/local.scss";`;
       }
-      if (query.include) {
-          localImport += `\n@import "${query.include}";`;
+      if (options.include) {
+          localImport += `\n@import "${options.include}";`;
       }
-      if (query.variables) {
-          localImport += `\n${query.variables}`;
+      if (options.variables) {
+          localImport += `\n${options.variables}`;
       }
       try {
           const regex = /(@import '.\/variables.scss';?|@import ".\/variables.scss";?)/g;
@@ -127,7 +123,7 @@ function loader(source, options) {
   }
 
   // inject prefix
-  const prefixCls = query.prefixCls || 'semi';
+  const prefixCls = options.prefixCls || 'semi';
 
   const prefixClsStr = `$prefix: '${prefixCls}';\n`;
 
